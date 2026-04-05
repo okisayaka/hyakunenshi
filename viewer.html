@@ -51,7 +51,6 @@
     white-space: nowrap;
     transition: color 0.15s;
   }
-
   #back-link:hover { color: #e8dfc8; }
 
   #chapter-title {
@@ -71,7 +70,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.8rem;
+    gap: 0.6rem;
     padding: 0.5rem 1rem;
     flex-shrink: 0;
     border-top: 1px solid #4a3f30;
@@ -92,15 +91,15 @@
     align-items: center;
     gap: 0.3rem;
   }
-
   .ctrl-btn:hover:not(:disabled) { background: #6a5f4a; }
   .ctrl-btn:disabled { opacity: 0.35; cursor: default; }
 
   #page-info {
     font-size: 0.8rem;
     color: #c8b89a;
-    min-width: 6rem;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
   }
 
   #page-input {
@@ -115,10 +114,7 @@
     border-radius: 2px;
   }
 
-  .zoom-label {
-    font-size: 0.75rem;
-    color: #a89880;
-  }
+  .zoom-label { font-size: 0.75rem; color: #a89880; }
 
   select {
     background: #4a3f30;
@@ -129,6 +125,84 @@
     font-size: 0.75rem;
     border-radius: 2px;
     cursor: pointer;
+  }
+
+  .ctrl-sep {
+    width: 1px; height: 1.4rem;
+    background: #4a3f30;
+    flex-shrink: 0;
+  }
+
+  /* 検索バー */
+  #search-bar {
+    background: #221a0e;
+    border-top: 1px solid #4a3f30;
+    padding: 0.45rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+  #search-bar.hidden { display: none; }
+
+  #search-input {
+    flex: 1;
+    min-width: 10rem;
+    background: #3a3028;
+    border: 1px solid #6a5f4a;
+    color: var(--ctrl-text);
+    padding: 0.35rem 0.6rem;
+    font-family: inherit;
+    font-size: 0.82rem;
+    border-radius: 2px;
+    outline: none;
+  }
+  #search-input:focus { border-color: #c8a870; }
+  #search-input::placeholder { color: #6a5f4a; }
+
+  #search-status {
+    font-size: 0.75rem;
+    color: #a89880;
+    min-width: 7rem;
+    white-space: nowrap;
+  }
+
+  .search-btn {
+    background: #4a3f30;
+    border: none;
+    color: var(--ctrl-text);
+    padding: 0.35rem 0.7rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.78rem;
+    border-radius: 2px;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .search-btn:hover:not(:disabled) { background: #6a5f4a; }
+  .search-btn:disabled { opacity: 0.35; cursor: default; }
+
+  #btn-search-close {
+    background: none;
+    border: none;
+    color: #a89880;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0 0.2rem;
+    line-height: 1;
+    transition: color 0.15s;
+  }
+  #btn-search-close:hover { color: #e8dfc8; }
+
+  #search-toggle-badge {
+    display: none;
+    background: var(--accent);
+    color: white;
+    font-size: 0.65rem;
+    border-radius: 8px;
+    padding: 0.1rem 0.4rem;
+    margin-left: 0.3rem;
   }
 
   /* キャンバスエリア */
@@ -146,9 +220,28 @@
     position: relative;
     box-shadow: 0 4px 24px rgba(0,0,0,0.5);
   }
+  .page-container canvas { display: block; }
 
-  .page-container canvas {
-    display: block;
+  /* テキストレイヤー */
+  .text-layer {
+    position: absolute;
+    top: 0; left: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .text-layer span {
+    position: absolute;
+    white-space: pre;
+    transform-origin: 0% 0%;
+    color: transparent;
+  }
+  .text-layer mark {
+    background: rgba(255, 210, 60, 0.5);
+    color: transparent;
+    border-radius: 2px;
+  }
+  .text-layer mark.current {
+    background: rgba(255, 120, 20, 0.7);
   }
 
   /* ローディング */
@@ -165,21 +258,16 @@
     color: #e8dfc8;
     font-size: 0.85rem;
   }
-
   .spinner {
-    width: 2rem;
-    height: 2rem;
+    width: 2rem; height: 2rem;
     border: 2px solid #4a3f30;
     border-top-color: #c8a870;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
-
   @keyframes spin { to { transform: rotate(360deg); } }
-
   #loading.hidden { display: none; }
 
-  /* エラー */
   #error-msg {
     display: none;
     padding: 2rem;
@@ -189,7 +277,6 @@
     line-height: 1.8;
   }
 
-  /* キーボードヒント */
   #hint {
     font-size: 0.7rem;
     color: #6a5f4a;
@@ -198,15 +285,15 @@
     flex-shrink: 0;
   }
 
-  /* スクロールバー */
   #canvas-wrapper::-webkit-scrollbar { width: 6px; }
   #canvas-wrapper::-webkit-scrollbar-track { background: #2a2015; }
   #canvas-wrapper::-webkit-scrollbar-thumb { background: #4a3f30; border-radius: 3px; }
 
   @media (max-width: 600px) {
-    #controls { gap: 0.4rem; padding: 0.4rem; }
-    .ctrl-btn { padding: 0.35rem 0.6rem; font-size: 0.75rem; }
+    #controls { gap: 0.3rem; padding: 0.4rem; }
+    .ctrl-btn { padding: 0.35rem 0.5rem; font-size: 0.75rem; }
     #page-input { width: 2.8rem; }
+    .ctrl-sep { display: none; }
   }
 </style>
 </head>
@@ -224,12 +311,13 @@
 
 <div id="controls">
   <button class="ctrl-btn" id="btn-first" title="最初のページ">|◀</button>
-  <button class="ctrl-btn" id="btn-prev" title="前のページ">◀ 前</button>
+  <button class="ctrl-btn" id="btn-prev"  title="前のページ">◀ 前</button>
   <div id="page-info">
     <input type="number" id="page-input" min="1" value="1"> / <span id="total-pages">—</span>
   </div>
   <button class="ctrl-btn" id="btn-next" title="次のページ">次 ▶</button>
   <button class="ctrl-btn" id="btn-last" title="最後のページ">▶|</button>
+  <div class="ctrl-sep"></div>
   <span class="zoom-label">表示幅：</span>
   <select id="zoom-select">
     <option value="auto" selected>自動</option>
@@ -239,6 +327,19 @@
     <option value="1.25">125%</option>
     <option value="1.5">150%</option>
   </select>
+  <div class="ctrl-sep"></div>
+  <button class="ctrl-btn" id="btn-search-toggle" title="検索を開く (Ctrl+F)">
+    🔍 検索<span id="search-toggle-badge"></span>
+  </button>
+</div>
+
+<div id="search-bar" class="hidden">
+  <input type="search" id="search-input" placeholder="キーワードを入力して Enter…" autocomplete="off">
+  <button class="search-btn" id="btn-search-exec">検索</button>
+  <button class="search-btn" id="btn-search-prev" disabled>▲ 前</button>
+  <button class="search-btn" id="btn-search-next" disabled>▼ 次</button>
+  <span id="search-status">—</span>
+  <button id="btn-search-close" title="閉じる (Esc)">✕</button>
 </div>
 
 <div id="canvas-wrapper">
@@ -249,82 +350,169 @@
   </div>
 </div>
 
-<div id="hint">← → キーまたはボタンでページを移動　　Space / Shift+Space でスクロール</div>
+<div id="hint">← → キーでページ移動　　Ctrl+F で検索　　Esc で検索を閉じる</div>
 
 <script>
-  // PDF.js ワーカー設定
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-  // URLパラメータ取得
-  const params = new URLSearchParams(location.search);
-  const pdfUrl = params.get('pdf') || '';
+  const params     = new URLSearchParams(location.search);
+  const pdfUrl     = params.get('pdf') || '';
   const titleParam = params.get('title') || '';
 
   document.getElementById('chapter-title').textContent = titleParam;
   document.title = titleParam + ' — 東京大学百年史 通史一';
 
-  let pdfDoc = null;
+  let pdfDoc      = null;
   let currentPage = 1;
-  let totalPages = 0;
-  let rendering = false;
-  let scale = 'auto';
+  let totalPages  = 0;
+  let rendering   = false;
+  let scale       = 'auto';
 
-  const wrapper = document.getElementById('canvas-wrapper');
-  const loading = document.getElementById('loading');
-  const loadingText = document.getElementById('loading-text');
-  const errorMsg = document.getElementById('error-msg');
-  const pageInput = document.getElementById('page-input');
+  // 検索状態
+  let matches    = [];   // [{page, itemIndex, charIndex, length}]
+  let matchIndex = -1;
+  let lastQuery  = '';
+  let textCache  = {};   // {pageNum: items[]}
+
+  const wrapper      = document.getElementById('canvas-wrapper');
+  const loading      = document.getElementById('loading');
+  const loadingText  = document.getElementById('loading-text');
+  const errorMsg     = document.getElementById('error-msg');
+  const pageInput    = document.getElementById('page-input');
   const totalPagesEl = document.getElementById('total-pages');
+  const searchBar    = document.getElementById('search-bar');
+  const searchInput  = document.getElementById('search-input');
+  const searchStatus = document.getElementById('search-status');
+  const badge        = document.getElementById('search-toggle-badge');
 
-  // 自動スケール計算
-  function getScale(viewport) {
+  // ---- スケール ----
+  function getScale(vp) {
     if (scale === 'auto') {
-      const maxW = Math.min(wrapper.clientWidth - 32, 900);
-      return maxW / viewport.width;
+      return Math.min(wrapper.clientWidth - 32, 900) / vp.width;
     }
     return parseFloat(scale);
   }
 
-  // 単一ページのレンダリング
+  // ---- テキスト取得（キャッシュ） ----
+  async function getItems(pageNum) {
+    if (textCache[pageNum]) return textCache[pageNum];
+    const page = await pdfDoc.getPage(pageNum);
+    const tc = await page.getTextContent();
+    textCache[pageNum] = tc.items;
+    return tc.items;
+  }
+
+  // ---- ページレンダリング ----
   async function renderPage(num) {
     if (rendering) return;
     rendering = true;
-
     wrapper.innerHTML = '';
-    errorMsg.style.display = 'none';
 
-    const page = await pdfDoc.getPage(num);
-    const baseViewport = page.getViewport({ scale: 1 });
-    const sc = getScale(baseViewport);
+    const page     = await pdfDoc.getPage(num);
+    const baseVp   = page.getViewport({ scale: 1 });
+    const sc       = getScale(baseVp);
     const viewport = page.getViewport({ scale: sc });
 
     const container = document.createElement('div');
     container.className = 'page-container';
+    container.style.width  = viewport.width  + 'px';
+    container.style.height = viewport.height + 'px';
 
-    const canvas = document.createElement('canvas');
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
+    // Canvas
+    const canvas   = document.createElement('canvas');
+    canvas.width   = viewport.width;
+    canvas.height  = viewport.height;
     container.appendChild(canvas);
+
+    // テキストレイヤー
+    const tlDiv = document.createElement('div');
+    tlDiv.className = 'text-layer';
+    tlDiv.style.width  = viewport.width  + 'px';
+    tlDiv.style.height = viewport.height + 'px';
+    container.appendChild(tlDiv);
+
     wrapper.appendChild(container);
 
-    await page.render({
-      canvasContext: canvas.getContext('2d'),
-      viewport
-    }).promise;
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+
+    const items = await getItems(num);
+    buildTextLayer(items, tlDiv, viewport, sc, num);
 
     wrapper.scrollTop = 0;
     rendering = false;
     updateControls();
   }
 
+  // ---- テキストレイヤー構築 ----
+  function buildTextLayer(items, container, viewport, sc, pageNum) {
+    const pageMatches = matches.filter(m => m.page === pageNum);
+
+    items.forEach((item, idx) => {
+      if (!item.str) return;
+
+      const tx         = pdfjsLib.Util.transform(viewport.transform, item.transform);
+      const fontH      = Math.sqrt(tx[2]*tx[2] + tx[3]*tx[3]);
+      const fontSize   = item.height * sc;
+      const scaleX     = item.width > 0
+        ? (item.width * sc) / (item.str.length * fontSize * 0.56 + 0.001)
+        : 1;
+
+      const myMatches = pageMatches.filter(m => m.itemIndex === idx);
+
+      if (myMatches.length === 0) {
+        // ハイライトなし
+        const span = document.createElement('span');
+        span.textContent = item.str;
+        span.style.cssText = `
+          left:${tx[4]}px; top:${tx[5] - fontH}px;
+          font-size:${fontSize}px;
+          transform:scaleX(${scaleX});
+        `;
+        container.appendChild(span);
+      } else {
+        // ハイライトあり：テキストを分割してmarkタグ挿入
+        const wrap = document.createElement('span');
+        wrap.style.cssText = `
+          left:${tx[4]}px; top:${tx[5] - fontH}px;
+          font-size:${fontSize}px;
+          transform:scaleX(${scaleX});
+        `;
+        const str    = item.str;
+        const sorted = [...myMatches].sort((a,b) => a.charIndex - b.charIndex);
+        let last = 0;
+
+        sorted.forEach(m => {
+          if (m.charIndex > last) {
+            wrap.appendChild(document.createTextNode(str.slice(last, m.charIndex)));
+          }
+          const mark = document.createElement('mark');
+          const isCurrent = matches[matchIndex] &&
+            matches[matchIndex].page      === m.page &&
+            matches[matchIndex].itemIndex === m.itemIndex &&
+            matches[matchIndex].charIndex === m.charIndex;
+          mark.className   = isCurrent ? 'current' : '';
+          mark.textContent = str.slice(m.charIndex, m.charIndex + m.length);
+          wrap.appendChild(mark);
+          last = m.charIndex + m.length;
+        });
+
+        if (last < str.length) {
+          wrap.appendChild(document.createTextNode(str.slice(last)));
+        }
+        container.appendChild(wrap);
+      }
+    });
+  }
+
+  // ---- コントロール更新 ----
   function updateControls() {
     pageInput.value = currentPage;
     totalPagesEl.textContent = totalPages;
-    document.getElementById('btn-prev').disabled = currentPage <= 1;
+    document.getElementById('btn-prev').disabled  = currentPage <= 1;
     document.getElementById('btn-first').disabled = currentPage <= 1;
-    document.getElementById('btn-next').disabled = currentPage >= totalPages;
-    document.getElementById('btn-last').disabled = currentPage >= totalPages;
+    document.getElementById('btn-next').disabled  = currentPage >= totalPages;
+    document.getElementById('btn-last').disabled  = currentPage >= totalPages;
   }
 
   function goTo(n) {
@@ -334,43 +522,144 @@
     renderPage(currentPage);
   }
 
-  // ボタン
   document.getElementById('btn-first').addEventListener('click', () => goTo(1));
-  document.getElementById('btn-prev').addEventListener('click', () => goTo(currentPage - 1));
-  document.getElementById('btn-next').addEventListener('click', () => goTo(currentPage + 1));
-  document.getElementById('btn-last').addEventListener('click', () => goTo(totalPages));
+  document.getElementById('btn-prev').addEventListener('click',  () => goTo(currentPage - 1));
+  document.getElementById('btn-next').addEventListener('click',  () => goTo(currentPage + 1));
+  document.getElementById('btn-last').addEventListener('click',  () => goTo(totalPages));
 
-  // ページ番号入力
-  pageInput.addEventListener('change', () => goTo(parseInt(pageInput.value, 10) || 1));
+  pageInput.addEventListener('change', () => goTo(parseInt(pageInput.value,10)||1));
   pageInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') goTo(parseInt(pageInput.value, 10) || 1);
+    if (e.key === 'Enter') goTo(parseInt(pageInput.value,10)||1);
   });
 
-  // ズーム
   document.getElementById('zoom-select').addEventListener('change', function() {
     scale = this.value;
+    textCache = {};
     renderPage(currentPage);
   });
 
-  // キーボード
+  // ---- キーボード ----
   document.addEventListener('keydown', e => {
-    if (e.target === pageInput) return;
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(currentPage + 1);
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(currentPage - 1);
+    if ((e.ctrlKey||e.metaKey) && e.key === 'f') { e.preventDefault(); openSearch(); return; }
+    if (e.key === 'Escape') { closeSearch(); return; }
+    if (e.target === pageInput || e.target === searchInput) return;
+    if (e.key === 'ArrowRight'||e.key === 'ArrowDown') goTo(currentPage+1);
+    if (e.key === 'ArrowLeft' ||e.key === 'ArrowUp')   goTo(currentPage-1);
     if (e.key === 'Home') goTo(1);
-    if (e.key === 'End') goTo(totalPages);
+    if (e.key === 'End')  goTo(totalPages);
   });
 
-  // ウィンドウリサイズ
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
-      if (scale === 'auto') renderPage(currentPage);
+      if (scale === 'auto') { textCache = {}; renderPage(currentPage); }
     }, 300);
   });
 
-  // PDF読み込み
+  // ===== 検索 =====
+  function openSearch() {
+    searchBar.classList.remove('hidden');
+    searchInput.focus();
+    searchInput.select();
+  }
+
+  function closeSearch() {
+    searchBar.classList.add('hidden');
+    matches = []; matchIndex = -1; lastQuery = '';
+    searchStatus.textContent = '—';
+    badge.style.display = 'none';
+    document.getElementById('btn-search-prev').disabled = true;
+    document.getElementById('btn-search-next').disabled = true;
+    renderPage(currentPage);
+  }
+
+  function updateSearchStatus() {
+    if (matches.length === 0) {
+      searchStatus.textContent = '見つかりません';
+      badge.style.display = 'none';
+      document.getElementById('btn-search-prev').disabled = true;
+      document.getElementById('btn-search-next').disabled = true;
+    } else {
+      searchStatus.textContent = `${matchIndex+1} / ${matches.length} 件`;
+      badge.textContent    = matches.length + '件';
+      badge.style.display  = 'inline';
+      document.getElementById('btn-search-prev').disabled = false;
+      document.getElementById('btn-search-next').disabled = false;
+    }
+  }
+
+  async function runSearch(query) {
+    if (!query || !pdfDoc) return;
+    matches = []; matchIndex = -1; lastQuery = query;
+    searchStatus.textContent = '検索中…';
+    const q = query.toLowerCase();
+
+    for (let p = 1; p <= totalPages; p++) {
+      const items = await getItems(p);
+      items.forEach((item, itemIdx) => {
+        const str = (item.str||'').toLowerCase();
+        let pos = 0;
+        while (true) {
+          const found = str.indexOf(q, pos);
+          if (found === -1) break;
+          matches.push({ page: p, itemIndex: itemIdx, charIndex: found, length: query.length });
+          pos = found + 1;
+        }
+      });
+    }
+
+    if (matches.length === 0) {
+      updateSearchStatus();
+      renderPage(currentPage);
+      return;
+    }
+    matchIndex = 0;
+    jumpToMatch(matchIndex);
+  }
+
+  function jumpToMatch(idx) {
+    const m = matches[idx];
+    if (!m) return;
+    currentPage = m.page;
+    renderPage(currentPage);
+    updateSearchStatus();
+  }
+
+  document.getElementById('btn-search-toggle').addEventListener('click', () => {
+    searchBar.classList.contains('hidden') ? openSearch() : closeSearch();
+  });
+  document.getElementById('btn-search-close').addEventListener('click', closeSearch);
+
+  document.getElementById('btn-search-exec').addEventListener('click', () => {
+    const q = searchInput.value.trim();
+    if (q) runSearch(q);
+  });
+
+  searchInput.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    const q = searchInput.value.trim();
+    if (!q) return;
+    if (q === lastQuery && matches.length > 0) {
+      matchIndex = (matchIndex+1) % matches.length;
+      jumpToMatch(matchIndex);
+    } else {
+      runSearch(q);
+    }
+  });
+
+  document.getElementById('btn-search-next').addEventListener('click', () => {
+    if (!matches.length) return;
+    matchIndex = (matchIndex+1) % matches.length;
+    jumpToMatch(matchIndex);
+  });
+  document.getElementById('btn-search-prev').addEventListener('click', () => {
+    if (!matches.length) return;
+    matchIndex = (matchIndex-1+matches.length) % matches.length;
+    jumpToMatch(matchIndex);
+  });
+
+  // ===== PDF読み込み =====
   async function loadPDF() {
     if (!pdfUrl) {
       loading.classList.add('hidden');
@@ -378,22 +667,17 @@
       wrapper.appendChild(errorMsg);
       return;
     }
-
     try {
-      const loadingTask = pdfjsLib.getDocument(pdfUrl);
-
-      loadingTask.onProgress = (progress) => {
-        if (progress.total) {
-          const pct = Math.round(progress.loaded / progress.total * 100);
-          loadingText.textContent = `読み込み中… ${pct}%`;
-        }
+      const task = pdfjsLib.getDocument(pdfUrl);
+      task.onProgress = prog => {
+        if (prog.total) loadingText.textContent =
+          `読み込み中… ${Math.round(prog.loaded/prog.total*100)}%`;
       };
-
-      pdfDoc = await loadingTask.promise;
+      pdfDoc     = await task.promise;
       totalPages = pdfDoc.numPages;
       loading.classList.add('hidden');
       goTo(1);
-    } catch (err) {
+    } catch(err) {
       console.error(err);
       loading.classList.add('hidden');
       errorMsg.style.display = 'block';
