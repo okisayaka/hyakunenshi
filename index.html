@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>東京大学百年史 通史一</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Shippori+Mincho:wght@400;600&display=swap');
+
+  :root {
+    --ink: #1a1208;
+    --paper: #f5f0e8;
+    --accent: #8b1a1a;
+    --muted: #6b5f4e;
+    --line: #d4c9b0;
+    --hover: #f0e8d8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
+    min-height: 100vh;
+    padding: 0 0 4rem;
+  }
+
+  /* 上部ヘッダー */
+  header {
+    border-bottom: 2px solid var(--ink);
+    padding: 2.5rem 3rem 2rem;
+    position: relative;
+    background: var(--paper);
+  }
+
+  .header-rule {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: var(--accent);
+  }
+
+  .series-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  h1 {
+    font-family: 'Shippori Mincho', serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.05em;
+  }
+
+  .subtitle {
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .meta {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  /* メインコンテンツ */
+  main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 3rem 2rem 0;
+  }
+
+  .intro {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    line-height: 1.9;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* 編 */
+  .hen {
+    margin-bottom: 2.5rem;
+  }
+
+  .hen-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .hen-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .hen-name {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    padding-left: 0.5rem;
+    border-left: 3px solid var(--accent);
+    letter-spacing: 0.05em;
+  }
+
+  /* 章リスト */
+  .chapter-list {
+    list-style: none;
+    border: 1px solid var(--line);
+  }
+
+  .chapter-list li {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .chapter-list li:last-child {
+    border-bottom: none;
+  }
+
+  .chapter-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1.2rem;
+    text-decoration: none;
+    color: var(--ink);
+    transition: background 0.15s;
+    position: relative;
+  }
+
+  .chapter-link:hover {
+    background: var(--hover);
+  }
+
+  .chapter-link:hover .arrow {
+    transform: translateX(4px);
+    color: var(--accent);
+  }
+
+  .chapter-num {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    min-width: 4rem;
+    font-family: 'Noto Serif JP', serif;
+  }
+
+  .chapter-title {
+    flex: 1;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    letter-spacing: 0.03em;
+  }
+
+  .arrow {
+    font-size: 0.9rem;
+    color: var(--line);
+    transition: transform 0.15s, color 0.15s;
+  }
+
+  /* 注記 */
+  .note {
+    margin-top: 3rem;
+    padding: 1.2rem 1.5rem;
+    border: 1px solid var(--line);
+    background: #faf7f2;
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.9;
+  }
+
+  .note strong {
+    color: var(--ink);
+  }
+
+  footer {
+    margin-top: 3rem;
+    padding: 2rem 2rem 0;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    border-top: 1px solid var(--line);
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  footer a {
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-rule"></div>
+  <div class="series-label">東京大学百年史編集委員会 編</div>
+  <h1>東京大学百年史　通史一</h1>
+  <div class="subtitle">東京大学出版会　1984年</div>
+  <div class="meta">
+    <span>第一編〜第三編　全9章</span>
+    <span>出典：東京大学学術機関リポジトリ</span>
+  </div>
+</header>
+
+<main>
+  <p class="intro">
+    各章のリンクをクリックすると、ブラウザ上でPDFを閲覧できます。ダウンロードは不要です。<br>
+    ページの移動は画面下部のボタン、または矢印キーで行えます。
+  </p>
+
+  <!-- 第一編 -->
+  <div class="hen">
+    <div class="hen-title">第一編</div>
+    <div class="hen-name">東京大学の起源</div>
+    <ul class="chapter-list">
+      <li>
+        <a class="chapter-link" href="viewer.html?pdf=pdfs/hen1_ch1.pdf&title=第一章　幕末・維新期の洋学教育機関">
+          <span class="chapter-num">第一章</span>
+          <span class="chapter-title">幕末・維新期の洋学教育機関</span>
+          <span class="arrow">→</span>
+        </a>
+      </li>
+      <li>
+        <a class="chapter-link" href="viewer.html?pdf=pdfs/hen1_ch2.pdf&title=第二章　維新直後の再編と展開">
+          <span class="chapter-num">第二章</span>
+          <span class="chapter-title">維新直後の再編と展開</span>
+          <span class="arrow">→</span>
+        </a>
+      </li>
+      <li>
+        <a class="chapter-link" href="viewer.html?pdf=pdfs/hen1_ch3.pdf&title=第三章　「学制」の発布と開成学校・医学校">
+          <span class="chapter-num">第三章</span>
+          <span class="chapter-title">「学制」の発布と開成学校・医学校</span>
+          <span class="arrow">→</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- 第二編 -->
+  <div class="hen">
+    <div class="hen-title">第二編</div>
+    <div class="hen-name">東京大学と官立専門教育諸機関</div>
+    <ul class="chapter-list">
+      <li>
+        <a class="chapter-link" href="viewer.html?pdf=pdfs/hen2_ch1.pdf&title=第一章　東京大学の創設">
+          <span class="chapter-num">第一章</span>
+          <span class="chapter-title">東京大学の創設</span>
+          <span class="arrow">→</span>
+        </a>
+      </li>
+      <li>
+        <a class="chapter-link" href="viewer.html?pdf=pdfs/hen2_ch2.pdf&title=第二章　東京大学以外の官立専門教育機関">
+          <span class="chapter-num">第二章</span>
+          <span class="chapter-title">東京大学以外の官立専門教育機関</span>
+          <span class="arrow">→</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- 第三編 -->
+  <div class="hen">
+    <div class="hen-title">第三編</div>
+    <div class="hen-name">帝国大学の創設</div>
+    <ul class="chapter-list">
+      <li>
+        <a class="chapter-link" href="viewer.html?pdf=pdfs/hen3_ch1.pdf&title=第一章　帝国大学の創設と改革">
+          <span class="chapter-num">第一章</span>
+          <span class="chapter-title">帝国大学の創設と改革</span>
+          <span class="arrow">→</span>
+        </a>
+      </li>
+      <li>
+        <a class="chapter-link" href="viewer.html?pdf=pdfs/hen3_ch2.pdf&title=第二章　分科大学と大学院">
+          <span class="chapter-num">第二章</span>
+          <span class="chapter-title">分科大学と大学院</span>
+          <span class="arrow">→</span>
+        </a>
+      </li>
+      <li>
+        <a class="chapter-link" href="viewer.html?pdf=pdfs/hen3_ch3.pdf&title=第三章　帝国大学と教育・学術">
+          <span class="chapter-num">第三章</span>
+          <span class="chapter-title">帝国大学と教育・学術</span>
+          <span class="arrow">→</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="note">
+    <strong>出典について：</strong>本ページで提供するPDFは、東京大学学術機関リポジトリ（UTokyo Repository）にて公開されている
+    「東京大学百年史 通史一」（<a href="https://repository.dl.itc.u-tokyo.ac.jp/records/53864" target="_blank">records/53864</a>）
+    を章ごとに分割したものです。学術・教育目的での閲覧を目的としています。
+  </div>
+</main>
+
+<footer>
+  東京大学百年史編集委員会 編『東京大学百年史 通史一』東京大学出版会、1984年。<br>
+  このページは授業での参照を目的として作成しました。
+</footer>
+
+</body>
+</html>

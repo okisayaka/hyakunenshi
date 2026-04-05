@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>閲覧 — 東京大学百年史 通史一</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400&display=swap');
+
+  :root {
+    --ink: #1a1208;
+    --paper: #f5f0e8;
+    --accent: #8b1a1a;
+    --muted: #6b5f4e;
+    --line: #d4c9b0;
+    --ctrl-bg: #2a2015;
+    --ctrl-text: #e8dfc8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #3a3028;
+    color: var(--ink);
+    font-family: 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* トップバー */
+  #topbar {
+    background: var(--ctrl-bg);
+    color: var(--ctrl-text);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.6rem 1.2rem;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+
+  #back-link {
+    color: #c8b89a;
+    text-decoration: none;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+
+  #back-link:hover { color: #e8dfc8; }
+
+  #chapter-title {
+    font-size: 0.8rem;
+    color: #c8b89a;
+    flex: 1;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* コントロールバー */
+  #controls {
+    background: var(--ctrl-bg);
+    color: var(--ctrl-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    padding: 0.5rem 1rem;
+    flex-shrink: 0;
+    border-top: 1px solid #4a3f30;
+    flex-wrap: wrap;
+  }
+
+  .ctrl-btn {
+    background: #4a3f30;
+    border: none;
+    color: var(--ctrl-text);
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.8rem;
+    border-radius: 2px;
+    transition: background 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .ctrl-btn:hover:not(:disabled) { background: #6a5f4a; }
+  .ctrl-btn:disabled { opacity: 0.35; cursor: default; }
+
+  #page-info {
+    font-size: 0.8rem;
+    color: #c8b89a;
+    min-width: 6rem;
+    text-align: center;
+  }
+
+  #page-input {
+    width: 3.5rem;
+    background: #4a3f30;
+    border: 1px solid #6a5f4a;
+    color: var(--ctrl-text);
+    padding: 0.3rem 0.4rem;
+    font-family: inherit;
+    font-size: 0.8rem;
+    text-align: center;
+    border-radius: 2px;
+  }
+
+  .zoom-label {
+    font-size: 0.75rem;
+    color: #a89880;
+  }
+
+  select {
+    background: #4a3f30;
+    border: 1px solid #6a5f4a;
+    color: var(--ctrl-text);
+    padding: 0.3rem 0.4rem;
+    font-family: inherit;
+    font-size: 0.75rem;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  /* キャンバスエリア */
+  #canvas-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem;
+    gap: 1rem;
+  }
+
+  .page-container {
+    position: relative;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  }
+
+  .page-container canvas {
+    display: block;
+  }
+
+  /* ローディング */
+  #loading {
+    position: fixed;
+    inset: 0;
+    background: rgba(30,24,16,0.85);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+    z-index: 100;
+    color: #e8dfc8;
+    font-size: 0.85rem;
+  }
+
+  .spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 2px solid #4a3f30;
+    border-top-color: #c8a870;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #loading.hidden { display: none; }
+
+  /* エラー */
+  #error-msg {
+    display: none;
+    padding: 2rem;
+    color: #e8c8a0;
+    text-align: center;
+    font-size: 0.9rem;
+    line-height: 1.8;
+  }
+
+  /* キーボードヒント */
+  #hint {
+    font-size: 0.7rem;
+    color: #6a5f4a;
+    text-align: center;
+    padding: 0.4rem;
+    flex-shrink: 0;
+  }
+
+  /* スクロールバー */
+  #canvas-wrapper::-webkit-scrollbar { width: 6px; }
+  #canvas-wrapper::-webkit-scrollbar-track { background: #2a2015; }
+  #canvas-wrapper::-webkit-scrollbar-thumb { background: #4a3f30; border-radius: 3px; }
+
+  @media (max-width: 600px) {
+    #controls { gap: 0.4rem; padding: 0.4rem; }
+    .ctrl-btn { padding: 0.35rem 0.6rem; font-size: 0.75rem; }
+    #page-input { width: 2.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <span id="loading-text">PDFを読み込んでいます…</span>
+</div>
+
+<div id="topbar">
+  <a id="back-link" href="index.html">← 目次に戻る</a>
+  <div id="chapter-title"></div>
+</div>
+
+<div id="controls">
+  <button class="ctrl-btn" id="btn-first" title="最初のページ">|◀</button>
+  <button class="ctrl-btn" id="btn-prev" title="前のページ">◀ 前</button>
+  <div id="page-info">
+    <input type="number" id="page-input" min="1" value="1"> / <span id="total-pages">—</span>
+  </div>
+  <button class="ctrl-btn" id="btn-next" title="次のページ">次 ▶</button>
+  <button class="ctrl-btn" id="btn-last" title="最後のページ">▶|</button>
+  <span class="zoom-label">表示幅：</span>
+  <select id="zoom-select">
+    <option value="auto" selected>自動</option>
+    <option value="0.5">50%</option>
+    <option value="0.75">75%</option>
+    <option value="1.0">100%</option>
+    <option value="1.25">125%</option>
+    <option value="1.5">150%</option>
+  </select>
+</div>
+
+<div id="canvas-wrapper">
+  <div id="error-msg">
+    PDFを読み込めませんでした。<br>
+    ファイルが正しい場所に配置されているか確認してください。<br><br>
+    <a href="index.html" style="color:#c8a870">← 目次に戻る</a>
+  </div>
+</div>
+
+<div id="hint">← → キーまたはボタンでページを移動　　Space / Shift+Space でスクロール</div>
+
+<script>
+  // PDF.js ワーカー設定
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  // URLパラメータ取得
+  const params = new URLSearchParams(location.search);
+  const pdfUrl = params.get('pdf') || '';
+  const titleParam = params.get('title') || '';
+
+  document.getElementById('chapter-title').textContent = titleParam;
+  document.title = titleParam + ' — 東京大学百年史 通史一';
+
+  let pdfDoc = null;
+  let currentPage = 1;
+  let totalPages = 0;
+  let rendering = false;
+  let scale = 'auto';
+
+  const wrapper = document.getElementById('canvas-wrapper');
+  const loading = document.getElementById('loading');
+  const loadingText = document.getElementById('loading-text');
+  const errorMsg = document.getElementById('error-msg');
+  const pageInput = document.getElementById('page-input');
+  const totalPagesEl = document.getElementById('total-pages');
+
+  // 自動スケール計算
+  function getScale(viewport) {
+    if (scale === 'auto') {
+      const maxW = Math.min(wrapper.clientWidth - 32, 900);
+      return maxW / viewport.width;
+    }
+    return parseFloat(scale);
+  }
+
+  // 単一ページのレンダリング
+  async function renderPage(num) {
+    if (rendering) return;
+    rendering = true;
+
+    wrapper.innerHTML = '';
+    errorMsg.style.display = 'none';
+
+    const page = await pdfDoc.getPage(num);
+    const baseViewport = page.getViewport({ scale: 1 });
+    const sc = getScale(baseViewport);
+    const viewport = page.getViewport({ scale: sc });
+
+    const container = document.createElement('div');
+    container.className = 'page-container';
+
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    container.appendChild(canvas);
+    wrapper.appendChild(container);
+
+    await page.render({
+      canvasContext: canvas.getContext('2d'),
+      viewport
+    }).promise;
+
+    wrapper.scrollTop = 0;
+    rendering = false;
+    updateControls();
+  }
+
+  function updateControls() {
+    pageInput.value = currentPage;
+    totalPagesEl.textContent = totalPages;
+    document.getElementById('btn-prev').disabled = currentPage <= 1;
+    document.getElementById('btn-first').disabled = currentPage <= 1;
+    document.getElementById('btn-next').disabled = currentPage >= totalPages;
+    document.getElementById('btn-last').disabled = currentPage >= totalPages;
+  }
+
+  function goTo(n) {
+    n = Math.max(1, Math.min(totalPages, n));
+    if (n === currentPage && !rendering) return;
+    currentPage = n;
+    renderPage(currentPage);
+  }
+
+  // ボタン
+  document.getElementById('btn-first').addEventListener('click', () => goTo(1));
+  document.getElementById('btn-prev').addEventListener('click', () => goTo(currentPage - 1));
+  document.getElementById('btn-next').addEventListener('click', () => goTo(currentPage + 1));
+  document.getElementById('btn-last').addEventListener('click', () => goTo(totalPages));
+
+  // ページ番号入力
+  pageInput.addEventListener('change', () => goTo(parseInt(pageInput.value, 10) || 1));
+  pageInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') goTo(parseInt(pageInput.value, 10) || 1);
+  });
+
+  // ズーム
+  document.getElementById('zoom-select').addEventListener('change', function() {
+    scale = this.value;
+    renderPage(currentPage);
+  });
+
+  // キーボード
+  document.addEventListener('keydown', e => {
+    if (e.target === pageInput) return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(currentPage + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(currentPage - 1);
+    if (e.key === 'Home') goTo(1);
+    if (e.key === 'End') goTo(totalPages);
+  });
+
+  // ウィンドウリサイズ
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (scale === 'auto') renderPage(currentPage);
+    }, 300);
+  });
+
+  // PDF読み込み
+  async function loadPDF() {
+    if (!pdfUrl) {
+      loading.classList.add('hidden');
+      errorMsg.style.display = 'block';
+      wrapper.appendChild(errorMsg);
+      return;
+    }
+
+    try {
+      const loadingTask = pdfjsLib.getDocument(pdfUrl);
+
+      loadingTask.onProgress = (progress) => {
+        if (progress.total) {
+          const pct = Math.round(progress.loaded / progress.total * 100);
+          loadingText.textContent = `読み込み中… ${pct}%`;
+        }
+      };
+
+      pdfDoc = await loadingTask.promise;
+      totalPages = pdfDoc.numPages;
+      loading.classList.add('hidden');
+      goTo(1);
+    } catch (err) {
+      console.error(err);
+      loading.classList.add('hidden');
+      errorMsg.style.display = 'block';
+      wrapper.appendChild(errorMsg);
+    }
+  }
+
+  loadPDF();
+</script>
+</body>
+</html>
